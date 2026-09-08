@@ -3,16 +3,11 @@ mod domain;
 mod infrastructure;
 
 use crate::application::services::TransferenciaService;
+use crate::domain::models::Transferencia;
 use crate::infrastructure::database::repos::InMemoryContaRepository;
 use axum::{Json, Router, extract::State, routing::post};
 use std::sync::Arc;
 
-#[derive(serde::Deserialize)]
-struct TransferenciaRequest {
-    de: String,
-    para: String,
-    valor: u64,
-}
 
 struct AppState {
     service: TransferenciaService<InMemoryContaRepository>,
@@ -32,9 +27,10 @@ async fn main() {
     println!("Servidor rodando em http://localhost:3000");
     axum::serve(listener, app).await.unwrap();
 
-    async fn handle_transferencia(
+}
+async fn handle_transferencia(
         State(state): State<Arc<AppState>>,
-        Json(payload): Json<TransferenciaRequest>,
+        Json(payload): Json<Transferencia>,
     ) -> String {
         match state
             .service
@@ -44,4 +40,3 @@ async fn main() {
             Err(e) => format!("Erro na transferência: {}", e),
         }
     }
-}
