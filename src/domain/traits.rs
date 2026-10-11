@@ -1,6 +1,4 @@
 pub trait ContaRepository: Send + Sync {
-    
-    fn obter_saldo(&self, id: &str) -> Result<u64, String>;
-
-    fn executar_transferencia(&self, de: &str, para: &str, valor: u64) -> Result<(), String>;
+    fn buscar_saldo(&self, conta: &str) -> Option<u64>;
+    fn atualizar_saldo(&self, conta: &str, novo_saldo: u64) -> Result<(), String>;
 }
