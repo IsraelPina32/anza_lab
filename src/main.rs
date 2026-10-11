@@ -40,3 +40,12 @@ async fn handle_transferencia(
             Err(e) => format!("Erro na transferência: {}", e),
         }
     }
+async fn handle_obter_saldo(
+    State(state): State<Arc<AppState>>,
+    Path(conta): Path<String>,
+) -> String {
+    match state.service.obter_saldo(&conta) {
+        Some(saldo) => format!("Saldo da conta '{}': {}\n", conta, saldo),
+        None => format!("Conta '{}' não encontrada.\n", conta),
+    }
+}
