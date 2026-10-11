@@ -5,9 +5,12 @@ mod infrastructure;
 use crate::application::services::TransferenciaService;
 use crate::domain::models::Transferencia;
 use crate::infrastructure::database::repos::InMemoryContaRepository;
-use axum::{Json, Router, extract::State, routing::post};
+use axum::{
+    extract::{Path, State},
+    routing::{get, post},
+    Json, Router,
+};
 use std::sync::Arc;
-
 
 struct AppState {
     service: TransferenciaService<InMemoryContaRepository>,
@@ -21,25 +24,27 @@ async fn main() {
 
     let app = Router::new()
         .route("/transferir", post(handle_transferencia))
+        .route("/saldo/:conta", get(handle_obter_saldo))
         .with_state(shared_state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("Servidor rodando em http://localhost:3000");
     axum::serve(listener, app).await.unwrap();
-
 }
+
 async fn handle_transferencia(
-        State(state): State<Arc<AppState>>,
-        Json(payload): Json<Transferencia>,
-    ) -> String {
-        match state
-            .service
-            .processar_transferencia(&payload.de, &payload.para, payload.valor)
-        {
-            Ok(_) => "Transferência realizada com sucesso!".to_string(),
-            Err(e) => format!("Erro na transferência: {}", e),
-        }
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<Transferencia>,
+) -> String {
+    match state
+        .service
+        .processar_transferencia(&payload.de, &payload.para, payload.valor)
+    {
+        Ok(_) => "Transferência realizada com sucesso!\n".to_string(),
+        Err(e) => format!("Erro na transferência: {}\n", e),
     }
+}
+
 async fn handle_obter_saldo(
     State(state): State<Arc<AppState>>,
     Path(conta): Path<String>,
