@@ -9,7 +9,7 @@ The system focuses on **memory safety, native thread-safety, and zero-cost abstr
 
 ## 🏗️ Architecture
 
-The project is structured into isolated layers to guarantee testability, maintainability, and seamless infrastructure swapping:
+The project is structured into isolated layers to guarantee testability, maintainability, and seamless infrastructure swapping.
 
 ```
 src/
